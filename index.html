@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta name="description" content="Santuario Digital de la Niña Blanca. Altar de peticiones de 24 y 48 horas, libro de milagros y oraciones a la Santa Muerte.">
-<meta name="keywords" content="Santa Muerte, Altar Virtual, Niña Blanca, Peticiones, Milagros, Mexico, Oraciones, Rosario Santa Muerte">
-<meta name="robots" content="index, follow">
-<meta property="og:description" content="Deja tu petición en el altar virtual y comparte tu testimonio.">
-<meta property="og:image" content="https://i.pinimg.com">
-<meta property="og:url" content="https://tu-usuario.github.io">
+    <!-- Las Meta Tags van dentro de HEAD y son invisibles para el usuario -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Santuario de la Niña Blanca | Altar Digital</title>
+    
+    <meta name="description" content="Santuario Digital de la Niña Blanca. Altar de peticiones de 24 y 48 horas, libro de milagros y oraciones a la Santa Muerte.">
+    <meta name="keywords" content="Santa Muerte, Altar Virtual, Niña Blanca, Peticiones, Milagros, Mexico, Oraciones, Rosario Santa Muerte">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Santuario Digital de la Santa Muerte">
+    <meta property="og:description" content="Deja tu petición en el altar virtual y comparte tu testimonio.">
+    <meta property="og:image" content="https://i.pinimg.com">
+    
     <link href="https://fonts.googleapis.com" rel="stylesheet">
     <style>
         :root { --gold: #d4af37; --dark-gold: #b8860b; --black: #050505; --dark-rgba: rgba(5, 5, 5, 0.94); }
-        
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body { 
@@ -24,11 +26,9 @@
             overflow-x: hidden; 
         }
 
-        /* Capas de Humo y Oscuridad */
-        #smoke-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.45; }
+        #smoke-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.45; pointer-events: none; }
         .overlay-dark { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.78); z-index: -2; }
 
-        /* Navegación */
         nav { background: rgba(0,0,0,0.98); border-bottom: 1px solid var(--gold); position: fixed; width: 100%; z-index: 1000; padding: 15px 0; backdrop-filter: blur(15px); }
         .nav-header { display: flex; flex-direction: column; align-items: center; }
         .tab-menu { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
@@ -36,16 +36,13 @@
         .tab-btn { background: none; border: 1px solid transparent; color: #888; font-family: 'Cinzel'; cursor: pointer; padding: 8px 18px; transition: 0.3s; font-size: 0.75rem; letter-spacing: 1px; }
         .tab-btn.active { color: var(--gold); border: 1px solid var(--gold); text-shadow: 0 0 10px var(--gold); background: rgba(212, 175, 55, 0.1); }
 
-        /* Controles de Audio */
         .audio-toggle { position: fixed; bottom: 20px; right: 20px; z-index: 1100; background: rgba(0,0,0,0.8); border: 1px solid var(--gold); color: var(--gold); padding: 10px; cursor: pointer; font-family: 'Cinzel'; font-size: 0.7rem; border-radius: 5px; }
 
-        /* Reloj Místico */
         .mystic-clock { position: fixed; top: 100px; right: 20px; z-index: 1100; background: rgba(0,0,0,0.85); border: 1px solid var(--gold); padding: 12px; border-radius: 50%; width: 85px; height: 85px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 0 15px var(--dark-gold); animation: pulse 4s infinite; }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
         #clock-time { font-family: 'Cinzel'; color: var(--gold); font-size: 0.85rem; }
 
-        /* Contenido */
-        .tab-content { display: none; padding: 200px 10% 60px; animation: fadeIn 1s ease; }
+        .tab-content { display: none; padding: 220px 10% 60px; animation: fadeIn 1s ease; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
@@ -56,8 +53,7 @@
         .btn-gold { background: none; border: 1px solid var(--gold); color: var(--gold); padding: 15px; cursor: pointer; font-family: 'Cinzel'; width: 100%; transition: 0.3s; letter-spacing: 2px; }
         .btn-gold:hover { background: var(--gold); color: black; box-shadow: 0 0 25px var(--gold); }
 
-        /* Estilo Pergamino para Milagros */
-        .card-pergamino { background: #1a150e; border: 1px solid #3d2f1d; padding: 25px; border-left: 5px solid var(--gold); position: relative; box-shadow: 5px 5px 15px rgba(0,0,0,0.5); }
+        .card-pergamino { background: #1a150e; border: 1px solid #3d2f1d; padding: 25px; border-left: 5px solid var(--gold); margin-bottom: 20px; box-shadow: 5px 5px 15px rgba(0,0,0,0.5); }
         .card-pergamino p { font-style: italic; color: #d1c1a5; line-height: 1.6; }
 
         footer { text-align: center; padding: 40px; color: #555; font-size: 0.8rem; background: rgba(0,0,0,0.9); }
@@ -88,7 +84,7 @@
     </nav>
 
     <audio id="prayerAudio" loop>
-        <source src="https://www.soundhelix.com" type="audio/mpeg">
+        <source src="https://www.chosic.com" type="audio/mpeg">
     </audio>
 
     <!-- INICIO -->
@@ -138,9 +134,10 @@
 
     <footer>Santuario de la Niña Blanca &copy; 2026</footer>
 
+    <!-- REEMPLAZA TU_CLIENT_ID_AQUI CON EL TUYO REAL -->
     <script src="https://www.paypal.com"></script>
+
     <script>
-        // --- AUDIO ---
         function toggleAudio() {
             const a = document.getElementById('prayerAudio');
             const btn = document.getElementById('audioBtn');
@@ -148,10 +145,10 @@
             else { a.pause(); btn.textContent = "🔇 Activar Oración"; }
         }
 
-        // --- RELOJ ---
-        setInterval(() => { document.getElementById('clock-time').textContent = new Date().toLocaleTimeString('es-MX', { hour12: false }); }, 1000);
+        setInterval(() => { 
+            document.getElementById('clock-time').textContent = new Date().toLocaleTimeString('es-MX', { hour12: false }); 
+        }, 1000);
 
-        // --- NAVEGACIÓN ---
         function openTab(evt, name) {
             let i, c, t;
             c = document.getElementsByClassName("tab-content");
@@ -164,7 +161,6 @@
 
         function iniciarSantuario() { document.getElementById('prayerAudio').play(); openTab(null, 'altar'); }
 
-        // PAYPAL
         paypal.Buttons({
             createOrder: (d, a) => a.order.create({ purchase_units: [{ amount: { value: document.getElementById('p-monto').value } }] }),
             onApprove: (d, a) => a.order.capture().then(() => {
@@ -200,7 +196,6 @@
             document.getElementById('lista-experiencias').innerHTML = d.map(e => `<div class="card-pergamino"><p>"${e.m}"</p><div style="font-size:0.7rem; color:var(--gold); margin-top:10px;">${e.n} • ${e.f}</div></div>`).join('');
         }
 
-        // HUMO
         const canvas = document.getElementById('smoke-canvas');
         const ctx = canvas.getContext('2d');
         let parts = []; canvas.width = window.innerWidth; canvas.height = window.innerHeight;
@@ -215,6 +210,5 @@
         renderExps();
     </script>
 </body>
-
 </html>
 
