@@ -1,214 +1,238 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <!-- Las Meta Tags van dentro de HEAD y son invisibles para el usuario -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Santuario de la Niña Blanca | Altar Digital</title>
     
-    <meta name="description" content="Santuario Digital de la Niña Blanca. Altar de peticiones de 24 y 48 horas, libro de milagros y oraciones a la Santa Muerte.">
-    <meta name="keywords" content="Santa Muerte, Altar Virtual, Niña Blanca, Peticiones, Milagros, Mexico, Oraciones, Rosario Santa Muerte">
-    <meta name="robots" content="index, follow">
-    <meta property="og:title" content="Santuario Digital de la Santa Muerte">
-    <meta property="og:description" content="Deja tu petición en el altar virtual y comparte tu testimonio.">
-    <meta property="og:image" content="https://i.pinimg.com">
-    
     <link href="https://fonts.googleapis.com" rel="stylesheet">
+    
     <style>
-        :root { --gold: #d4af37; --dark-gold: #b8860b; --black: #050505; --dark-rgba: rgba(5, 5, 5, 0.94); }
+        :root { 
+            --gold: #d4af37; 
+            --dark-gold: #b8860b; 
+            --black: #050505; 
+            --dark-rgba: rgba(5, 5, 5, 0.9); 
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body { 
-            background: #000 url('https://i.pinimg.com') no-repeat center center fixed; 
-            background-size: cover;
+            background: var(--black);
             color: #e0e0e0; 
             font-family: 'Raleway', sans-serif; 
-            overflow-x: hidden; 
+            overflow-x: hidden;
+            min-height: 100vh;
         }
 
-        #smoke-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.45; pointer-events: none; }
-        .overlay-dark { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.78); z-index: -2; }
+        /* FONDO DINÁMICO CON IMAGEN */
+        .bg-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            /* Reemplaza esta URL con la imagen que prefieras */
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                        url('https://images.unsplash.com');
+            background-size: cover;
+            background-position: center;
+            z-index: -2;
+            transition: transform 0.5s ease;
+        }
 
-        nav { background: rgba(0,0,0,0.98); border-bottom: 1px solid var(--gold); position: fixed; width: 100%; z-index: 1000; padding: 15px 0; backdrop-filter: blur(15px); }
+        /* NAVEGACIÓN Y MENÚ DESPLEGABLE */
+        nav { 
+            background: rgba(0,0,0,0.95); 
+            border-bottom: 1px solid var(--gold); 
+            position: fixed; 
+            width: 100%; 
+            z-index: 1000; 
+            padding: 10px 0;
+            backdrop-filter: blur(10px);
+        }
+
         .nav-header { display: flex; flex-direction: column; align-items: center; }
-        .tab-menu { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
         
-        .tab-btn { background: none; border: 1px solid transparent; color: #888; font-family: 'Cinzel'; cursor: pointer; padding: 8px 18px; transition: 0.3s; font-size: 0.75rem; letter-spacing: 1px; }
-        .tab-btn.active { color: var(--gold); border: 1px solid var(--gold); text-shadow: 0 0 10px var(--gold); background: rgba(212, 175, 55, 0.1); }
+        .tab-menu { 
+            display: flex; 
+            justify-content: center; 
+            gap: 5px; 
+            margin-top: 10px; 
+        }
 
-        .audio-toggle { position: fixed; bottom: 20px; right: 20px; z-index: 1100; background: rgba(0,0,0,0.8); border: 1px solid var(--gold); color: var(--gold); padding: 10px; cursor: pointer; font-family: 'Cinzel'; font-size: 0.7rem; border-radius: 5px; }
+        /* Estilo de las Pestañas (Interactivas al pasar el puntero) */
+        .tab-item { position: relative; display: inline-block; }
 
-        .mystic-clock { position: fixed; top: 100px; right: 20px; z-index: 1100; background: rgba(0,0,0,0.85); border: 1px solid var(--gold); padding: 12px; border-radius: 50%; width: 85px; height: 85px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 0 15px var(--dark-gold); animation: pulse 4s infinite; }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
-        #clock-time { font-family: 'Cinzel'; color: var(--gold); font-size: 0.85rem; }
+        .tab-btn { 
+            background: none; 
+            border: none; 
+            color: #aaa; 
+            font-family: 'Cinzel'; 
+            cursor: pointer; 
+            padding: 15px 25px; 
+            transition: 0.4s; 
+            font-size: 0.85rem; 
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
 
-        .tab-content { display: none; padding: 220px 10% 60px; animation: fadeIn 1s ease; }
+        /* Efecto Hover: Se ilumina y despliega */
+        .tab-item:hover .tab-btn {
+            color: var(--gold);
+            text-shadow: 0 0 15px var(--gold);
+        }
+
+        /* Línea decorativa bajo el botón al hacer hover */
+        .tab-btn::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 50%;
+            width: 0; height: 2px;
+            background: var(--gold);
+            transition: 0.3s;
+            transform: translateX(-50%);
+        }
+
+        .tab-item:hover .tab-btn::after { width: 80%; }
+
+        /* RELOJ Y AUDIO */
+        .mystic-clock { 
+            position: fixed; top: 110px; right: 20px; z-index: 1100; 
+            background: rgba(0,0,0,0.8); border: 1px solid var(--gold); 
+            padding: 10px; border-radius: 50%; width: 90px; height: 90px; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        /* CONTENIDO */
+        .tab-content { 
+            display: none; 
+            padding: 200px 10% 100px; 
+            animation: slideUp 0.8s ease forwards;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
         .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .box { background: var(--dark-rgba); border: 1px solid var(--gold); padding: 35px; margin-bottom: 30px; box-shadow: 0 20px 60px rgba(0,0,0,1); }
-        .section-title { font-family: 'Cinzel'; color: var(--gold); text-align: center; margin-bottom: 30px; font-size: 2.2rem; text-shadow: 2px 2px 5px #000; }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-        input, textarea, select { width: 100%; padding: 14px; margin: 10px 0; background: #000; border: 1px solid #333; color: var(--gold); font-family: inherit; }
-        .btn-gold { background: none; border: 1px solid var(--gold); color: var(--gold); padding: 15px; cursor: pointer; font-family: 'Cinzel'; width: 100%; transition: 0.3s; letter-spacing: 2px; }
-        .btn-gold:hover { background: var(--gold); color: black; box-shadow: 0 0 25px var(--gold); }
+        .box { 
+            background: var(--dark-rgba); 
+            border: 1px solid var(--gold); 
+            padding: 40px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            border-radius: 8px;
+        }
 
-        .card-pergamino { background: #1a150e; border: 1px solid #3d2f1d; padding: 25px; border-left: 5px solid var(--gold); margin-bottom: 20px; box-shadow: 5px 5px 15px rgba(0,0,0,0.5); }
-        .card-pergamino p { font-style: italic; color: #d1c1a5; line-height: 1.6; }
+        .section-title { 
+            font-family: 'Cinzel'; 
+            color: var(--gold); 
+            text-align: center; 
+            margin-bottom: 25px; 
+            font-size: 2.5rem; 
+            letter-spacing: 4px;
+        }
 
-        footer { text-align: center; padding: 40px; color: #555; font-size: 0.8rem; background: rgba(0,0,0,0.9); }
+        .btn-gold { 
+            background: transparent; 
+            border: 1px solid var(--gold); 
+            color: var(--gold); 
+            padding: 15px 30px; 
+            cursor: pointer; 
+            font-family: 'Cinzel'; 
+            transition: 0.3s;
+            letter-spacing: 2px;
+            margin-top: 20px;
+        }
+
+        .btn-gold:hover { 
+            background: var(--gold); 
+            color: #000; 
+            box-shadow: 0 0 20px var(--gold); 
+        }
+
     </style>
 </head>
 <body>
 
-    <canvas id="smoke-canvas"></canvas>
-    <div class="overlay-dark"></div>
+    <div class="bg-overlay" id="mainBg"></div>
 
     <div class="mystic-clock">
-        <span style="font-size: 0.5rem; color: #666;">Vigilia</span>
-        <div id="clock-time">00:00:00</div>
+        <span style="font-size: 0.6rem; color: var(--gold);">Vigilia</span>
+        <div id="clock-time" style="font-family:'Cinzel';">00:00:00</div>
     </div>
 
-    <button class="audio-toggle" onclick="toggleAudio()" id="audioBtn">🔊 Silenciar Oración</button>
-    
     <nav>
         <div class="nav-header">
-            <div style="font-family:'Cinzel'; color:var(--gold); font-size:1.6rem; letter-spacing:6px;">SANTA MUERTE</div>
+            <div style="font-family:'Cinzel'; color:var(--gold); font-size:1.8rem; letter-spacing:8px; font-weight:700;">SANTA MUERTE</div>
             <div class="tab-menu">
-                <button class="tab-btn active" onclick="openTab(event, 'inicio')">Inicio</button>
-                <button class="tab-btn" onclick="openTab(event, 'altar')">Altar Virtual</button>
-                <button class="tab-btn" onclick="openTab(event, 'experiencias')">Milagros</button>
-                <button class="tab-btn" onclick="openTab(event, 'contacto')">Contacto</button>
+                <div class="tab-item">
+                    <button class="tab-btn" onmouseover="changeBg('https://i.ibb.co')" onclick="openTab(event, 'inicio')">Inicio</button>
+                </div>
+                <div class="tab-item">
+                    <button class="tab-btn" onmouseover="changeBg('https://images.unsplash.com')" onclick="openTab(event, 'altar')">Altar Virtual</button>
+                </div>
+                <div class="tab-item">
+                    <button class="tab-btn" onclick="openTab(event, 'experiencias')">Milagros</button>
+                </div>
+                <div class="tab-item">
+                    <button class="tab-btn" onclick="openTab(event, 'contacto')">Contacto</button>
+                </div>
             </div>
         </div>
     </nav>
 
-    <audio id="prayerAudio" loop>
-        <source src="https://www.chosic.com" type="audio/mpeg">
-    </audio>
-
-    <!-- INICIO -->
+    <!-- CONTENIDO: INICIO -->
     <div id="inicio" class="tab-content active">
-        <div style="text-align: center; max-width: 800px; margin: 0 auto;">
+        <div style="text-align: center;">
             <h1 class="section-title">Santuario Digital</h1>
-            <p style="font-size: 1.25rem; font-style: italic; line-height: 1.8; margin-bottom: 45px;">"Ella escucha lo que el mundo ignora. Deja tu ofrenda y permite que su justicia guíe tu camino."</p>
-            <button class="btn-gold" style="width:auto; padding: 18px 70px;" onclick="iniciarSantuario()">ENTRAR AL ALTAR</button>
+            <div class="box">
+                <p style="font-size: 1.4rem; font-style: italic; line-height: 1.8;">
+                    "Bienvenido hijo mío a este rincón de fe. Aquí tu voz es escuchada y tus peticiones son llevadas a la Niña Blanca."
+                </p>
+                <button class="btn-gold" onclick="openTab(null, 'altar')">HACER UNA PETICIÓN</button>
+            </div>
         </div>
     </div>
 
-    <!-- ALTAR VIRTUAL -->
+    <!-- CONTENIDO: ALTAR -->
     <div id="altar" class="tab-content">
         <h2 class="section-title">Altar de Peticiones</h2>
-        <div class="box" style="max-width: 550px; margin: 0 auto 50px;">
-            <input type="text" id="p-nombre" placeholder="Nombre del Devoto">
-            <textarea id="p-mensaje" placeholder="Tu petición con toda tu fe..." rows="4"></textarea>
-            <select id="p-monto">
-                <option value="50">Vigilia 24 Horas ($50 MXN)</option>
-                <option value="100">Vigilia 48 Horas ($100 MXN)</option>
-            </select>
-            <div id="paypal-button-container"></div>
-            <p style="font-size: 0.75rem; color: #777; text-align: center; margin-top: 15px; font-style: italic;">Las donaciones se ocuparán para el mantenimiento del sitio web y comprar su dominio web.</p>
-        </div>
-        <div id="muro-peticiones" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;"></div>
-    </div>
-
-    <!-- EXPERIENCIAS -->
-    <div id="experiencias" class="tab-content">
-        <h2 class="section-title">Libro de Milagros</h2>
-        <div class="box" style="max-width: 550px; margin: 0 auto 50px;">
-            <textarea id="e-mensaje" placeholder="Cuenta tu milagro para dar fe a otros..." rows="4"></textarea>
-            <input type="text" id="e-nombre" placeholder="Tu Nombre">
-            <button class="btn-gold" onclick="publicarExperiencia()">PUBLICAR TESTIMONIO</button>
-        </div>
-        <div id="lista-experiencias" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;"></div>
-    </div>
-
-    <!-- CONTACTO -->
-    <div id="contacto" class="tab-content">
-        <h2 class="section-title">Contacto</h2>
-        <div class="box" style="text-align: center; max-width: 500px; margin: 0 auto;">
-            <p style="font-family:'Cinzel'; color:var(--gold); font-size:1.4rem;">altarvirtual.info@gmail.com</p>
-            <a href="mailto:altarvirtual.info@gmail.com" class="btn-gold" style="margin-top:25px; display:inline-block; width:auto; padding: 15px 40px; text-decoration:none;">Enviar Gmail</a>
+        <div class="box" style="max-width: 600px; margin: 0 auto;">
+            <p style="text-align:center; color: var(--gold); margin-bottom: 20px;">Escribe tu intención con respeto</p>
+            <input type="text" placeholder="Nombre completo" style="width:100%; padding:12px; margin-bottom:10px; background:#111; border:1px solid #333; color:white;">
+            <textarea placeholder="Describe tu petición..." rows="5" style="width:100%; padding:12px; background:#111; border:1px solid #333; color:white;"></textarea>
+            <button class="btn-gold" style="width:100%">ENCENDER VELA VIRTUAL</button>
         </div>
     </div>
 
-    <footer>Santuario de la Niña Blanca &copy; 2026</footer>
-
-    <!-- REEMPLAZA TU_CLIENT_ID_AQUI CON EL TUYO REAL -->
-    <script src="https://www.paypal.com"></script>
 
     <script>
-        function toggleAudio() {
-            const a = document.getElementById('prayerAudio');
-            const btn = document.getElementById('audioBtn');
-            if(a.paused) { a.play(); btn.textContent = "🔊 Silenciar Oración"; }
-            else { a.pause(); btn.textContent = "🔇 Activar Oración"; }
+        // Función para cambiar de pestaña con animación
+        function openTab(evt, tabName) {
+            const contents = document.querySelectorAll(".tab-content");
+            contents.forEach(content => content.classList.remove("active"));
+            
+            const buttons = document.querySelectorAll(".tab-btn");
+            buttons.forEach(btn => btn.style.color = "#aaa");
+
+            document.getElementById(tabName).classList.add("active");
+            if(evt) evt.currentTarget.style.color = "var(--gold)";
         }
 
-        setInterval(() => { 
-            document.getElementById('clock-time').textContent = new Date().toLocaleTimeString('es-MX', { hour12: false }); 
+        // Función extra: Cambiar el fondo al pasar el puntero (opcional)
+        function changeBg(imageUrl) {
+            // Descomenta la siguiente línea si quieres que el fondo cambie al pasar el mouse por los botones
+            // document.getElementById('mainBg').style.backgroundImage = `url('${imageUrl}')`;
+        }
+
+        // Reloj
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('clock-time').innerText = now.toLocaleTimeString();
         }, 1000);
-
-        function openTab(evt, name) {
-            let i, c, t;
-            c = document.getElementsByClassName("tab-content");
-            for (i = 0; i < c.length; i++) c[i].style.display = "none";
-            t = document.getElementsByClassName("tab-btn");
-            for (i = 0; i < t.length; i++) t[i].className = t[i].className.replace(" active", "");
-            document.getElementById(name).style.display = "block";
-            if(evt) evt.currentTarget.className += " active";
-        }
-
-        function iniciarSantuario() { document.getElementById('prayerAudio').play(); openTab(null, 'altar'); }
-
-        paypal.Buttons({
-            createOrder: (d, a) => a.order.create({ purchase_units: [{ amount: { value: document.getElementById('p-monto').value } }] }),
-            onApprove: (d, a) => a.order.capture().then(() => {
-                crearPeticion(document.getElementById('p-nombre').value, document.getElementById('p-mensaje').value, document.getElementById('p-monto').value == "50" ? 24 : 48);
-            })
-        }).render('#paypal-button-container');
-
-        function crearPeticion(n, m, h) {
-            const id = 't-'+Date.now();
-            const card = document.createElement('div');
-            card.className = 'card-pergamino';
-            card.innerHTML = `<p>"${m}"</p><div style="color:var(--gold); font-size:0.75rem; margin-top:10px;">EXPIRA EN: <span id="${id}">--:--:--</span> | ${n}</div>`;
-            document.getElementById('muro-peticiones').prepend(card);
-            let s = h * 3600;
-            const timer = setInterval(() => {
-                let hh = Math.floor(s/3600), mm = Math.floor((s%3600)/60), ss = s%60;
-                document.getElementById(id).textContent = `${hh < 10 ? '0':''}${hh}:${mm < 10 ? '0':''}${mm}:${ss < 10 ? '0':''}${ss}`;
-                if(--s < 0) { clearInterval(timer); card.remove(); }
-            }, 1000);
-        }
-
-        function publicarExperiencia() {
-            const exp = { n: document.getElementById('e-nombre').value || "Creyente", m: document.getElementById('e-mensaje').value, f: new Date().toLocaleDateString() };
-            if(!exp.m) return;
-            let d = JSON.parse(localStorage.getItem('altar_exps')) || [];
-            d.unshift(exp); localStorage.setItem('altar_exps', JSON.stringify(d));
-            document.getElementById('e-nombre').value = ''; document.getElementById('e-mensaje').value = '';
-            renderExps();
-        }
-
-        function renderExps() {
-            const d = JSON.parse(localStorage.getItem('altar_exps')) || [];
-            document.getElementById('lista-experiencias').innerHTML = d.map(e => `<div class="card-pergamino"><p>"${e.m}"</p><div style="font-size:0.7rem; color:var(--gold); margin-top:10px;">${e.n} • ${e.f}</div></div>`).join('');
-        }
-
-        const canvas = document.getElementById('smoke-canvas');
-        const ctx = canvas.getContext('2d');
-        let parts = []; canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        class Particle {
-            constructor() { this.x = Math.random()*canvas.width; this.y = canvas.height+100; this.s = Math.random()*80+40; this.o = Math.random()*0.25; }
-            update() { this.y -= 0.5; if(this.y < -100) this.y = canvas.height+100; }
-            draw() { ctx.fillStyle = `rgba(150,150,150,${this.o})`; ctx.beginPath(); ctx.arc(this.x, this.y, this.s, 0, Math.PI*2); ctx.fill(); }
-        }
-        function animate() { ctx.clearRect(0,0,canvas.width,canvas.height); parts.forEach(p=>{p.update(); p.draw();}); requestAnimationFrame(animate); }
-        for(let i=0; i<35; i++) parts.push(new Particle()); animate();
-
-        renderExps();
     </script>
 </body>
 </html>
-
